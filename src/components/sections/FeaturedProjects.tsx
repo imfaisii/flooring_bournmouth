@@ -19,42 +19,42 @@ const projects: Project[] = [
     id: "1",
     title: "Luxury Apartment",
     category: "Vinyl",
-    image: "/hero_bg_nano.png",
+    image: "/images/projects/luxury_apartment.png",
     description: "Premium herringbone vinyl in a modern high-rise."
   },
   {
     id: "2",
     title: "Seaside Villa",
     category: "Hardwood",
-    image: "/hero_reference.png",
+    image: "/images/projects/seaside_villa.png",
     description: "Restored oak floorboards with a matte finish."
   },
   {
     id: "3",
     title: "Modern Office",
     category: "Commercial",
-    image: "/hero_bg_final.png",
+    image: "/images/projects/modern_office.png",
     description: "Durable and stylish safety flooring for workspaces."
   },
   {
     id: "4",
     title: "Heritage Restoration",
     category: "Sanding",
-    image: "/hero_bg_v2.png",
+    image: "/images/projects/heritage_restoration.png",
     description: "Bringing life back to 100-year-old parquet."
   },
   {
     id: "5",
     title: "Boutique Hotel",
     category: "Laminate",
-    image: "/hero_dark_flooring_background.png",
+    image: "/images/projects/boutique_hotel.png",
     description: "High-traffic resistance with a luxury aesthetic."
   },
   {
     id: "6",
     title: "Eco Residence",
     category: "Engineered",
-    image: "/hero_bg_nano.png",
+    image: "/images/projects/eco_residence.png",
     description: "Sustainable bamboo flooring with natural warmth."
   },
 ];

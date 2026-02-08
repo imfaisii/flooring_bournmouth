@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 
 export function HeroSection() {
@@ -35,8 +36,15 @@ export function HeroSection() {
             <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/10 to-transparent opacity-50 rounded-t-full" />
 
             {/* The "Q" Logo */}
-            <div className="text-[180px] leading-none font-heading font-bold text-transparent bg-clip-text bg-gradient-to-b from-secondary via-accent to-secondary-light drop-shadow-[0_0_25px_rgba(230,170,104,0.5)] transform translate-y-2 select-none group-hover:scale-105 transition-transform duration-700">
-              B
+            {/* The Logo */}
+            <div className="relative w-40 h-40 lg:w-48 lg:h-48 transform translate-y-2 select-none group-hover:scale-105 transition-transform duration-700">
+              <Image
+                src="/flooring_bournmouth_logo.png"
+                alt="Flooring Bournemouth - Professional Flooring Installation Services in Dorset"
+                fill
+                className="object-contain drop-shadow-[0_0_25px_rgba(230,170,104,0.3)]"
+                priority
+              />
             </div>
 
             {/* Inner highlight */}
@@ -47,10 +55,10 @@ export function HeroSection() {
         {/* Headline */}
         <div className="space-y-6 max-w-5xl mx-auto">
           <h1 className="text-4xl md:text-6xl lg:text-[5rem] font-heading font-normal tracking-tight text-white drop-shadow-2xl leading-[1.1]">
-            BESPOKE  FLOORING
+            BESPOKE FLOORING
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5F5F0] via-white to-[#F5F5F0] drop-shadow-[0_0_25px_rgba(230,170,104,0.2)]">
-              TAILORED FOR YOU
+            <span className="block mt-2 font-serif italic font-light text-3xl md:text-5xl lg:text-[4rem] text-transparent bg-clip-text bg-gradient-to-r from-secondary-light via-accent to-secondary-light drop-shadow-[0_0_25px_rgba(230,170,104,0.2)] tracking-wide">
+              in Bournemouth
             </span>
           </h1>
 

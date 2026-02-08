@@ -1,23 +1,45 @@
 import Link from "next/link";
+import { Container } from "@/components/ui/Container";
+import { Button } from "@/components/ui/Button";
+import { Home, ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-50 px-4">
-      <div className="text-center max-w-md">
-        <h1 className="text-7xl font-bold text-primary mb-4">404</h1>
-        <h2 className="text-2xl font-bold text-primary-dark mb-3">
-          Page Not Found
-        </h2>
-        <p className="text-neutral-500 mb-8">
-          Sorry, the page you are looking for does not exist or has been moved.
-        </p>
-        <Link
-          href="/"
-          className="inline-flex items-center justify-center bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-lg font-semibold transition-colors"
-        >
-          Back to Home
-        </Link>
-      </div>
-    </div>
+    <main className="bg-dark-bg min-h-screen flex items-center justify-center relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[100px] pointer-events-none translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[80px] pointer-events-none -translate-x-1/2 translate-y-1/2" />
+
+      <Container>
+        <div className="max-w-2xl mx-auto text-center space-y-8 relative z-10">
+          <div className="space-y-4">
+            <h1 className="text-[10rem] font-bold font-heading text-transparent bg-clip-text bg-gradient-to-br from-white/20 to-white/5 leading-none select-none">
+              404
+            </h1>
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              Page Not Found
+            </h2>
+            <p className="text-lg text-neutral-400 max-w-md mx-auto">
+              Oops! It looks like you've taken a wrong turn. The page you are looking for might have been moved or doesn't exist.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/">
+              <Button size="lg" className="w-full sm:w-auto">
+                <Home className="w-4 h-4 mr-2" />
+                Back to Home
+              </Button>
+            </Link>
+            <Link href="/contact">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Contact Support
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </Container>
+    </main>
   );
 }

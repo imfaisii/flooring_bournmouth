@@ -4,6 +4,9 @@ import { QuoteForm } from "@/components/sections/QuoteForm";
 import { Phone, Mail, Clock, MapPin } from "lucide-react";
 import { companyInfo } from "@/lib/constants/company";
 
+// Enable ISR with 2-hour revalidation (static sidebar content)
+export const revalidate = 7200; // Revalidate every 2 hours
+
 export const metadata: Metadata = {
   title: "Get a Free Quote",
   description:

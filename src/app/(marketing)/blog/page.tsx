@@ -1,6 +1,9 @@
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
+// Enable ISR with 1-hour revalidation (for future blog posts)
+export const revalidate = 3600; // Revalidate every 1 hour
+
 export default function BlogPage() {
     return (
         <div className="pt-32 pb-20 bg-dark-bg min-h-screen">

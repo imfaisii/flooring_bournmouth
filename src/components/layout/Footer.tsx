@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Phone, Mail, MapPin, Clock, Facebook, Instagram } from "lucide-react";
 import { companyInfo } from "@/lib/constants/company";
 import { services } from "@/lib/constants/services";
@@ -14,40 +15,20 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Company Info */}
           <div>
-            <div className="mb-4">
-              <span className="font-heading text-xl font-bold text-white">
-                Bournemouth
-              </span>
-              <span className="font-heading text-xl font-bold text-secondary">
-                {" "}
-                Flooring
-              </span>
-            </div>
+            <Link href="/" className="mb-6 block relative w-48 h-16">
+              <Image
+                src="/flooring_bournmouth_logo.png"
+                alt="Flooring Bournmouth"
+                fill
+                className="object-contain object-left"
+              />
+            </Link>
             <p className="text-sm leading-relaxed mb-6">
               Professional flooring installation and supply services across
               Bournemouth and the surrounding Dorset area. Quality materials,
               expert fitting, guaranteed satisfaction.
             </p>
-            <div className="flex gap-3">
-              <a
-                href={siteConfig.social.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-4 h-4" />
-              </a>
-              <a
-                href={siteConfig.social.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
-            </div>
+
           </div>
 
           {/* Our Services */}
@@ -161,11 +142,18 @@ export function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-2 text-sm text-neutral-400">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-neutral-400">
             <p>
               &copy; {currentYear} {companyInfo.name}. All rights reserved.
             </p>
-            <p>Professional Flooring Services in Bournemouth, Dorset</p>
+            <div className="flex gap-6">
+              <Link href="/privacy-policy" className="hover:text-white transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms-of-service" className="hover:text-white transition-colors">
+                Terms of Service
+              </Link>
+            </div>
           </div>
         </div>
       </div>

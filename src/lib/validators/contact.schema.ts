@@ -10,6 +10,10 @@ export const contactSchema = z.object({
     .string()
     .min(6, "Please enter a valid phone number")
     .max(20, "Phone number is too long"),
+  address: z
+    .string()
+    .min(5, "Please enter your full address")
+    .max(500, "Address is too long"),
   service: z.string().min(1, "Please select a service"),
   message: z
     .string()

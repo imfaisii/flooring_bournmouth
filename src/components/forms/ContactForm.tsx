@@ -27,6 +27,7 @@ export function ContactForm() {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
       phone: formData.get("phone") as string,
+      address: formData.get("address") as string,
       service: formData.get("service") as string,
       message: formData.get("message") as string,
     };
@@ -104,6 +105,14 @@ export function ContactForm() {
           error={errors.service}
         />
       </div>
+
+      <Input
+        label="Address"
+        name="address"
+        placeholder="123 Main Street, Bournemouth, BH1 1AA"
+        required
+        error={errors.address}
+      />
 
       <Textarea
         label="Your Message"

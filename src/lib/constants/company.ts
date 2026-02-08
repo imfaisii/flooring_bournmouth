@@ -1,14 +1,14 @@
 export const companyInfo = {
-  name: "Flooring Bournemouth",
+  name: "Flooring Bournmouth",
   tagline: "Expert Flooring Solutions in Bournemouth",
-  phone: "(01202) 000-000",
+  phone: "+44 7912 291247",
   email: "info@flooringbournemouth.co.uk",
   address: {
-    street: "123 High Street",
+    street: "Office 12, Bourne House, 23 Hinton Rd",
     city: "Bournemouth",
     county: "Dorset",
-    postcode: "BH1 1AA",
-    full: "123 High Street, Bournemouth, Dorset, BH1 1AA",
+    postcode: "BH1 2EF",
+    full: "Office 12, Bourne House, 23 Hinton Rd, Bournemouth, Dorset, BH1 2EF",
   },
   hours: [
     { day: "Monday - Friday", time: "8:00 AM - 6:00 PM" },

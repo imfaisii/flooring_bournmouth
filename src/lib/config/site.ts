@@ -1,8 +1,8 @@
 export const siteConfig = {
-  name: process.env.NEXT_PUBLIC_SITE_NAME || "Bournemouth Flooring",
+  name: process.env.NEXT_PUBLIC_SITE_NAME || "Flooring Bournemouth",
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   description:
-    "Professional flooring installation, repair, and supply services in Bournemouth. Hardwood, laminate, vinyl, tile, and carpet solutions for residential and commercial spaces.",
+    "Flooring Bournemouth - Expert flooring installation, repair, and supply services in Bournemouth & Dorset. Hardwood, laminate, LVT, vinyl, tile, and carpet solutions for residential and commercial spaces. 15+ years of trusted service.",
   company: {
     phone: process.env.NEXT_PUBLIC_COMPANY_PHONE || "(01202) 000-000",
     email: "info@flooringbournemouth.co.uk",

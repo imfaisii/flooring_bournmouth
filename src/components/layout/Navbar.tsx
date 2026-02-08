@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { navLinks } from "@/lib/constants/navigation";
 import { MobileMenu } from "./MobileMenu";
@@ -28,9 +29,18 @@ export function Navbar() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo - Matches "QCF" text from design */}
-          <Link href="/" className="group relative z-50">
-            <span className="font-heading text-2xl lg:text-3xl font-bold text-white tracking-widest group-hover:text-shadow-glow transition-all duration-300">
-              Bournemouth Flooring
+          <Link href="/" className="group relative z-50 flex items-center gap-2">
+            <div className="relative w-12 h-12">
+              <Image
+                src="/flooring_bournmouth_logo.png"
+                alt="Flooring Bournmouth Logo"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+            <span className="font-heading text-xl lg:text-2xl font-bold text-white tracking-widest group-hover:text-shadow-glow transition-all duration-300">
+              Flooring Bournmouth
             </span>
           </Link>
 

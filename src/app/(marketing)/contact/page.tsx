@@ -4,6 +4,9 @@ import { Container } from "@/components/ui/Container";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { companyInfo } from "@/lib/constants/company";
 
+// Enable ISR with 2-hour revalidation (static contact info)
+export const revalidate = 7200; // Revalidate every 2 hours
+
 export const metadata: Metadata = {
   title: "Contact Us",
   description:
