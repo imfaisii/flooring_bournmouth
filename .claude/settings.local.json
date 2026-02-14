@@ -23,7 +23,10 @@
       "Bash(ls:*)",
       "WebFetch(domain:docs.x.ai)",
       "mcp__supabase__search_docs",
-      "mcp__supabase__get_logs"
+      "mcp__supabase__get_logs",
+      "Bash(pnpm build:*)",
+      "Bash(npx supabase gen types typescript --local:*)",
+      "Bash(node -e:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

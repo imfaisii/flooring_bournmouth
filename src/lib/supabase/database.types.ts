@@ -103,7 +103,7 @@ export type Database = {
           flooring_type: string
           generated_image_path: string | null
           id: string
-          ip_address: string
+          ip_address: unknown
           original_image_path: string
           processing_time_ms: number | null
           session_id: string
@@ -117,7 +117,7 @@ export type Database = {
           flooring_type: string
           generated_image_path?: string | null
           id?: string
-          ip_address: string
+          ip_address: unknown
           original_image_path: string
           processing_time_ms?: number | null
           session_id: string
@@ -131,7 +131,7 @@ export type Database = {
           flooring_type?: string
           generated_image_path?: string | null
           id?: string
-          ip_address?: string
+          ip_address?: unknown
           original_image_path?: string
           processing_time_ms?: number | null
           session_id?: string
@@ -139,6 +139,92 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      support_conversations: {
+        Row: {
+          anonymous_id: string | null
+          created_at: string | null
+          id: string
+          initial_message: string | null
+          last_message_at: string | null
+          message_thread_id: number | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          anonymous_id?: string | null
+          created_at?: string | null
+          id?: string
+          initial_message?: string | null
+          last_message_at?: string | null
+          message_thread_id?: number | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          anonymous_id?: string | null
+          created_at?: string | null
+          id?: string
+          initial_message?: string | null
+          last_message_at?: string | null
+          message_thread_id?: number | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      support_messages: {
+        Row: {
+          content: string | null
+          conversation_id: string
+          created_at: string | null
+          id: string
+          image_url: string | null
+          is_read: boolean | null
+          read_at: string | null
+          sender_name: string | null
+          sender_telegram_id: number | null
+          sender_type: string
+          telegram_message_id: number | null
+        }
+        Insert: {
+          content?: string | null
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_read?: boolean | null
+          read_at?: string | null
+          sender_name?: string | null
+          sender_telegram_id?: number | null
+          sender_type: string
+          telegram_message_id?: number | null
+        }
+        Update: {
+          content?: string | null
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_read?: boolean | null
+          read_at?: string | null
+          sender_name?: string | null
+          sender_telegram_id?: number | null
+          sender_type?: string
+          telegram_message_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "support_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -148,25 +234,22 @@ export type Database = {
       check_visualization_rate_limit: {
         Args: {
           p_ip_address: string
-          p_session_id: string
           p_max_attempts?: number
+          p_session_id: string
           p_window_hours?: number
         }
         Returns: {
           allowed: boolean
-          attempts_used: number
           attempts_remaining: number
+          attempts_used: number
           reset_at: string
         }[]
       }
       get_chart_data: {
-        Args: {
-          start_date: string
-          end_date: string
-        }
+        Args: { end_date: string; start_date: string }
         Returns: {
-          date: string
           contact_count: number
+          date: string
           quote_count: number
         }[]
       }

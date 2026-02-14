@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { Toaster } from "sonner";
 import { siteConfig } from "@/lib/config/site";
+import SupportChatWidget from "@/components/support/support-chat-widget";
 import "./globals.css";
 
 const inter = Inter({
@@ -42,6 +43,7 @@ export default function RootLayout({
       <body>
         {children}
         <Toaster position="top-right" richColors />
+        <SupportChatWidget />
       </body>
     </html>
   );
