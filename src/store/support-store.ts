@@ -169,9 +169,17 @@ export const useSupportStore = create<SupportState>((set, get) => ({
     }
 
     if (conversation) {
-      set({ currentConversation: conversation, messages: [] })
+      // Try to restore messages from localStorage first (instant load)
+      const cachedMessages = localStorage.getItem(`support_messages_${conversation.id}`)
+      const initialMessages = cachedMessages ? JSON.parse(cachedMessages) : []
 
-      // Load messages and subscribe
+      set({ currentConversation: conversation, messages: initialMessages })
+
+      if (initialMessages.length > 0) {
+        console.log('[Support:Store] Restored', initialMessages.length, 'messages from cache')
+      }
+
+      // Load messages from server and subscribe (will update if there are new messages)
       const anonymousId = localStorage.getItem('support_anonymous_id')
       if (anonymousId) {
         get().loadConversationMessages(conversation.id, anonymousId)
@@ -193,9 +201,16 @@ export const useSupportStore = create<SupportState>((set, get) => ({
       }
 
       const data = await response.json()
-      set({ messages: data.messages || [] })
+      const messages = data.messages || []
+      set({ messages })
 
-      console.log('[Support:Store] Loaded messages:', data.messages?.length || 0)
+      // Save to localStorage for instant restore on refresh
+      if (messages.length > 0) {
+        localStorage.setItem(`support_messages_${conversationId}`, JSON.stringify(messages))
+        console.log('[Support:Store] Saved', messages.length, 'messages to cache')
+      }
+
+      console.log('[Support:Store] Loaded messages:', messages.length)
     } catch (error) {
       console.error('[Support:Store] Failed to load messages:', error)
       set({ error: 'Failed to load messages' })
@@ -366,9 +381,13 @@ export const useSupportStore = create<SupportState>((set, get) => ({
           if (!messageExists) {
             // Remove any temp messages before adding real message
             const messagesWithoutTemp = state.messages.filter(m => !m.id.startsWith('temp_'))
+            const updatedMessages = [...messagesWithoutTemp, newMessage]
 
             // Add message to state
-            set({ messages: [...messagesWithoutTemp, newMessage] })
+            set({ messages: updatedMessages })
+
+            // Save to localStorage for persistence
+            localStorage.setItem(`support_messages_${conversationId}`, JSON.stringify(updatedMessages))
 
             console.log('[Support:Store] Realtime added message, removed temp messages')
 
