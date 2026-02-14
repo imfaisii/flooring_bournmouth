@@ -29,7 +29,12 @@
       "Bash(node -e:*)",
       "Bash(curl \"https://api.telegram.org/bot8031057657:AAFcCyMkx3CrwUlZXDqfF3OyhAWrYenKUWo/getWebhookInfo\")",
       "Bash(npm run dev:*)",
-      "Bash(npx supabase db push:*)"
+      "Bash(npx supabase db push:*)",
+      "Bash(taskkill:*)",
+      "Bash(timeout 5 tail:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(timeout 10 cmd:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
