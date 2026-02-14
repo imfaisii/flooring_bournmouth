@@ -294,15 +294,34 @@ export const useSupportStore = create<SupportState>((set, get) => ({
         throw new Error(errorData.error || 'Failed to send message')
       }
 
-      await response.json()
+      const result = await response.json()
+      const realMessage = result.message
 
-      // Remove temp message - realtime subscription will add the real message
-      // This eliminates race condition between API response and realtime
+      // Wait briefly for realtime to potentially fire first
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      // Check if realtime already added the message
       const currentMessages = get().messages
-      set({
-        messages: currentMessages.filter(m => m.id !== tempId),
-        isSending: false,
-      })
+      const messageExists = currentMessages.some(m => m.id === realMessage.id)
+
+      if (messageExists) {
+        // Realtime already added it - just remove temp and update state
+        set({
+          messages: currentMessages.filter(m => m.id !== tempId),
+          isSending: false,
+        })
+        console.log('[Support:Store] Message added by realtime')
+      } else {
+        // Realtime hasn't fired - add real message ourselves
+        set({
+          messages: [
+            ...currentMessages.filter(m => m.id !== tempId),
+            realMessage
+          ],
+          isSending: false,
+        })
+        console.log('[Support:Store] Message added directly (realtime pending)')
+      }
 
       console.log('[Support:Store] Message sent successfully')
     } catch (error) {

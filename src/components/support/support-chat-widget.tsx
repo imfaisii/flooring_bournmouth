@@ -70,6 +70,14 @@ export default function SupportChatWidget() {
     }
   }, [conversations, currentConversation, setCurrentConversation])
 
+  // Reload conversations when widget opens (ensures fresh data)
+  useEffect(() => {
+    if (isOpen && anonymousId) {
+      loadConversations(anonymousId)
+      console.log('[Support:Widget] Reloading conversations on widget open')
+    }
+  }, [isOpen, anonymousId, loadConversations])
+
   if (!isClient) {
     // Prevent hydration mismatch
     return null
