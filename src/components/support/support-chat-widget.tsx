@@ -16,10 +16,20 @@ import SupportChatInput from './support-chat-input'
  * Floating button with chat modal for anonymous support
  */
 export default function SupportChatWidget() {
-  const { isOpen, unreadCount, openWidget, closeWidget } = useSupportStore()
+  const {
+    isOpen,
+    unreadCount,
+    openWidget,
+    closeWidget,
+    loadConversations,
+    conversations,
+    currentConversation,
+    setCurrentConversation
+  } = useSupportStore()
   const [anonymousId, setAnonymousId] = useState<string>('')
   const [isClient, setIsClient] = useState(false)
 
+  // Initialize widget and load conversations
   useEffect(() => {
     // Set client flag for hydration
     setIsClient(true)
@@ -29,10 +39,36 @@ export default function SupportChatWidget() {
       const id = getOrCreateAnonymousId()
       setAnonymousId(id)
       console.log('[Support:Widget] Anonymous ID:', id)
+
+      // Load existing conversations for this anonymous user
+      loadConversations(id)
+      console.log('[Support:Widget] Loading conversations for:', id)
     } catch (error) {
       console.error('[Support:Widget] Failed to get anonymous ID:', error)
     }
-  }, [])
+  }, [loadConversations])
+
+  // Persist current conversation ID to localStorage
+  useEffect(() => {
+    if (currentConversation) {
+      localStorage.setItem('support_current_conversation_id', currentConversation.id)
+      console.log('[Support:Widget] Saved current conversation:', currentConversation.id)
+    } else {
+      localStorage.removeItem('support_current_conversation_id')
+    }
+  }, [currentConversation])
+
+  // Restore current conversation from localStorage when conversations load
+  useEffect(() => {
+    const savedConversationId = localStorage.getItem('support_current_conversation_id')
+    if (savedConversationId && conversations.length > 0 && !currentConversation) {
+      const conversation = conversations.find(c => c.id === savedConversationId)
+      if (conversation) {
+        setCurrentConversation(conversation)
+        console.log('[Support:Widget] Restored conversation:', savedConversationId)
+      }
+    }
+  }, [conversations, currentConversation, setCurrentConversation])
 
   if (!isClient) {
     // Prevent hydration mismatch

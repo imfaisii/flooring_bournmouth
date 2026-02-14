@@ -58,9 +58,19 @@ async function downloadAndUploadTelegramPhoto(
       const supabase = createServiceClient()
       const contentType = downloadResponse.headers.get('content-type') || 'image/jpeg'
 
+      // Validate content type is allowed
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+      if (!allowedTypes.includes(contentType)) {
+        console.error('[Telegram Webhook] Invalid content type:', contentType)
+        return null
+      }
+
+      // Create File object with proper MIME type to avoid application/octet-stream detection
+      const file = new File([buffer], filename, { type: contentType })
+
       const { data, error } = await supabase.storage
         .from('support-images')
-        .upload(filename, buffer, {
+        .upload(filename, file, {
           contentType,
           cacheControl: '3600',
           upsert: false,
