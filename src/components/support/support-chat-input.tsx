@@ -4,8 +4,8 @@
 // Support Chat Input - Message Input Component
 // =====================================================
 
-import { useState, FormEvent } from 'react'
-import { Send, Loader2 } from 'lucide-react'
+import { useState, FormEvent, useRef } from 'react'
+import { Send, Loader2, Image as ImageIcon, X } from 'lucide-react'
 import { useSupportStore } from '@/store/support-store'
 
 interface SupportChatInputProps {
@@ -14,7 +14,7 @@ interface SupportChatInputProps {
 
 /**
  * Support Chat Input
- * Handles message input and sending
+ * Handles message input and sending with image support
  */
 export default function SupportChatInput({ anonymousId }: SupportChatInputProps) {
   const {
@@ -27,31 +27,102 @@ export default function SupportChatInput({ anonymousId }: SupportChatInputProps)
   } = useSupportStore()
 
   const [message, setMessage] = useState('')
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    if (!allowedTypes.includes(file.type)) {
+      setError('Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.')
+      return
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image too large. Maximum size is 5MB.')
+      return
+    }
+
+    setSelectedImage(file)
+
+    // Create preview
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const clearImage = () => {
+    setSelectedImage(null)
+    setImagePreview(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
 
-    if (!message.trim() || isSending || !anonymousId) {
+    if ((!message.trim() && !selectedImage) || isSending || !anonymousId) {
       return
     }
 
     const messageText = message.trim()
-    setMessage('') // Clear input immediately
+    let imageUrl: string | undefined
+
+    // Upload image if selected
+    if (selectedImage) {
+      setIsUploading(true)
+      try {
+        const formData = new FormData()
+        formData.append('file', selectedImage)
+
+        const uploadResponse = await fetch('/api/support/upload', {
+          method: 'POST',
+          body: formData,
+        })
+
+        if (!uploadResponse.ok) {
+          throw new Error('Failed to upload image')
+        }
+
+        const uploadData = await uploadResponse.json()
+        imageUrl = uploadData.url
+      } catch (err) {
+        console.error('[Support:Input] Failed to upload image:', err)
+        setError('Failed to upload image. Please try again.')
+        setIsUploading(false)
+        return
+      } finally {
+        setIsUploading(false)
+      }
+    }
+
+    // Clear inputs
+    setMessage('')
+    clearImage()
 
     try {
       if (!currentConversation) {
         // Create new conversation with initial message
         console.log('[Support:Input] Creating new conversation')
-        await createConversation(anonymousId, messageText)
+        await createConversation(anonymousId, messageText || 'Image')
       } else {
         // Send message to existing conversation
         console.log('[Support:Input] Sending message')
-        await sendMessage(messageText)
+        await sendMessage(messageText || '', imageUrl)
       }
     } catch (err) {
       console.error('[Support:Input] Failed to send message:', err)
-      // Restore message on error
-      setMessage(messageText)
+      // Restore message on error (but not image)
+      if (messageText) setMessage(messageText)
     }
   }
 
@@ -105,7 +176,48 @@ export default function SupportChatInput({ anonymousId }: SupportChatInputProps)
 
       {/* Input form */}
       <form onSubmit={handleSubmit} className="p-4">
+        {/* Image Preview */}
+        {imagePreview && (
+          <div className="mb-3 relative inline-block">
+            <img
+              src={imagePreview}
+              alt="Preview"
+              className="max-h-32 rounded-lg border border-gray-300"
+            />
+            <button
+              type="button"
+              onClick={clearImage}
+              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+              aria-label="Remove image"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         <div className="flex gap-2">
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            onChange={handleImageSelect}
+            className="hidden"
+            disabled={isSending || isUploading}
+          />
+
+          {/* Image upload button */}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isSending || isUploading}
+            className="border border-gray-300 text-gray-600 p-3 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+            aria-label="Attach image"
+          >
+            <ImageIcon className="w-5 h-5" />
+          </button>
+
+          {/* Text input */}
           <input
             type="text"
             value={message}
@@ -115,18 +227,20 @@ export default function SupportChatInput({ anonymousId }: SupportChatInputProps)
                 ? 'Type your message...'
                 : 'Describe your issue...'
             }
-            className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed text-sm"
-            disabled={isSending}
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed text-sm text-gray-900 placeholder:text-gray-400"
+            disabled={isSending || isUploading}
             maxLength={5000}
             autoFocus={!currentConversation}
           />
+
+          {/* Send button */}
           <button
             type="submit"
-            disabled={isSending || !message.trim()}
+            disabled={isSending || isUploading || (!message.trim() && !selectedImage)}
             className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-shrink-0"
             aria-label="Send message"
           >
-            {isSending ? (
+            {isSending || isUploading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <Send className="w-5 h-5" />

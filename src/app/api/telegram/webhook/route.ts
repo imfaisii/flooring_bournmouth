@@ -120,8 +120,25 @@ export async function POST(req: NextRequest) {
     if (message.photo && message.photo.length > 0) {
       // Telegram provides multiple sizes, get the largest
       const largestPhoto = message.photo[message.photo.length - 1]
-      imageUrl = largestPhoto.file_id
-      // Note: file_id can be used directly or converted to URL via getFile API
+      const fileId = largestPhoto.file_id
+
+      // Get file path from Telegram
+      try {
+        const botToken = process.env.TELEGRAM_BOT_TOKEN
+        const fileResponse = await fetch(
+          `https://api.telegram.org/bot${botToken}/getFile?file_id=${fileId}`
+        )
+        const fileData = await fileResponse.json()
+
+        if (fileData.ok && fileData.result.file_path) {
+          // Construct full URL to the file
+          imageUrl = `https://api.telegram.org/file/bot${botToken}/${fileData.result.file_path}`
+        }
+      } catch (error) {
+        console.error('[Telegram Webhook] Failed to get file URL:', error)
+        // Fallback to file_id if URL fetch fails
+        imageUrl = fileId
+      }
     }
 
     if (!content && !imageUrl) {

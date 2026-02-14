@@ -250,9 +250,12 @@ export const useSupportStore = create<SupportState>((set, get) => ({
       return
     }
 
+    // Generate unique temp ID
+    const tempId = `temp_${Date.now()}_${Math.random()}`
+
     // Optimistic update - add temporary message
     const tempMessage: SupportMessage = {
-      id: `temp_${Date.now()}`,
+      id: tempId,
       conversation_id: currentConversation.id,
       sender_type: 'user',
       sender_name: null,
@@ -291,18 +294,24 @@ export const useSupportStore = create<SupportState>((set, get) => ({
         throw new Error(errorData.error || 'Failed to send message')
       }
 
-      // Fetch updated messages to replace temporary message
-      const conversationResponse = await fetch(
-        `/api/support/conversations/${currentConversation.id}?anonymous_id=${encodeURIComponent(anonymousId)}`
-      )
+      const result = await response.json()
+      const realMessage = result.message
 
-      if (conversationResponse.ok) {
-        const conversationData = await conversationResponse.json()
-        set({ messages: conversationData.messages, isSending: false })
-      } else {
-        // Remove temp message on error
+      // Replace temp message with real message (avoid duplicates)
+      const currentMessages = get().messages
+      const messageExists = currentMessages.some(m => m.id === realMessage.id)
+
+      if (!messageExists) {
         set({
-          messages: messages,
+          messages: currentMessages
+            .filter(m => m.id !== tempId) // Remove temp message
+            .concat(realMessage), // Add real message
+          isSending: false,
+        })
+      } else {
+        // Realtime already added it, just remove temp and set isSending
+        set({
+          messages: currentMessages.filter(m => m.id !== tempId),
           isSending: false,
         })
       }
@@ -312,8 +321,9 @@ export const useSupportStore = create<SupportState>((set, get) => ({
       console.error('[Support:Store] Failed to send message:', error)
 
       // Remove temporary message on error
+      const currentMessages = get().messages
       set({
-        messages: messages,
+        messages: currentMessages.filter(m => m.id !== tempId),
         error: error instanceof Error ? error.message : 'Failed to send message',
         isSending: false,
       })
